@@ -14,10 +14,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let sceneWindow = (scene as? UIWindowScene) else { return }
         self.window = UIWindow(windowScene: sceneWindow)
-        
-//        showOnboarding()
-        self.window?.rootViewController = UINavigationController(rootViewController: HomeViewController())
-        
+        showOnboarding()
+//        showHome()
         self.window?.makeKeyAndVisible()
     }
     
@@ -28,7 +26,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     private func showHome() {
-        let homeVC = HomeViewController()
+        let homeVC = Builder.createHomeViewController()
         self.window?.rootViewController = UINavigationController(rootViewController: homeVC)
     }
 

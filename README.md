@@ -14,6 +14,7 @@
 - UIKit
 - CleanArchitecture
 - Combine
+- CoreData
 - API (Wordpress api)
 
 

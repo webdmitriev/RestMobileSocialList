@@ -7,11 +7,21 @@
 
 import UIKit
 
-class HomeViewController: UIViewController {
+protocol HomeViewControllerProtocol: AnyObject {
+    func setupUI()
+}
 
+class HomeViewController: UIViewController, HomeViewControllerProtocol {
+
+    var presenter: HomeViewPresenterProtocol!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .brown
+    }
+    
+    func setupUI() {
+        
     }
 
 }
