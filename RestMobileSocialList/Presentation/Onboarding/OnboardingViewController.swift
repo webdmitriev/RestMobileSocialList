@@ -17,14 +17,14 @@ class OnboardingViewController: UIViewController {
     
     private let builder = UIBuilder()
     
-    private lazy var onboardingImageView: UIImageView = builder.addOnboardingImage("onboarding-bg", scale: .scaleToFill)
+    private lazy var onboardingImageView: UIImageView = builder.addImage("onboarding-bg", scale: .scaleToFill)
     
     private lazy var onboardingLabel: UILabel = builder.addLabel("Rest Mobile", fz: 28, fw: .bold, color: .white)
     
-    private lazy var onboardingImageOne = builder.addOnboardingImage("onboarding-01")
-    private lazy var onboardingImageTwo = builder.addOnboardingImage("onboarding-02")
-    private lazy var onboardingImageThree = builder.addOnboardingImage("onboarding-03")
-    private lazy var onboardingImageFour = builder.addOnboardingImage("onboarding-04")
+    private lazy var onboardingImageOne = builder.addImage("onboarding-01")
+    private lazy var onboardingImageTwo = builder.addImage("onboarding-02")
+    private lazy var onboardingImageThree = builder.addImage("onboarding-03")
+    private lazy var onboardingImageFour = builder.addImage("onboarding-04")
     
     private lazy var onboardingGradientOne: UIView = builder.addOnboardingGradient(x: 1, y: 0)
     private lazy var onboardingGradientTwo: UIView = builder.addOnboardingGradient(x: 0, y: 1)

@@ -14,8 +14,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let sceneWindow = (scene as? UIWindowScene) else { return }
         self.window = UIWindow(windowScene: sceneWindow)
-        showOnboarding()
-//        showHome()
+        //showOnboarding()
+        tabBar()
         self.window?.makeKeyAndVisible()
     }
     
@@ -25,9 +25,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.window?.rootViewController = onboardingVC
     }
     
-    private func showHome() {
-        let homeVC = Builder.createHomeViewController()
-        self.window?.rootViewController = UINavigationController(rootViewController: homeVC)
+    private func tabBar() {
+        let tabBar = TabBarController()
+        self.window?.rootViewController = UINavigationController(rootViewController: tabBar)
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -67,7 +67,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 extension SceneDelegate: OnboardingViewControllerDelegate {
     func onboardingDidFinish() {
         UIView.transition(with: window!, duration: 0.3, options: .transitionCrossDissolve) {
-            self.showHome()
+            self.tabBar()
         }
     }
 }

@@ -12,16 +12,6 @@ class UIBuilder {
     let offsetPage: CGFloat = 16
     let screenSizeW: CGFloat = UIScreen.main.bounds.width
     
-    func addOnboardingImage(_ image: String, scale: UIView.ContentMode = .scaleAspectFit) -> UIImageView {
-        let img = UIImageView()
-        img.translatesAutoresizingMaskIntoConstraints = false
-        img.image = UIImage(named: image)
-        img.contentMode = scale
-        img.layer.masksToBounds = true
-        
-        return img
-    }
-    
     func addOnboardingGradient(x: Int, y: Int) -> UIView {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -41,6 +31,16 @@ class UIBuilder {
         }
         
         return view
+    }
+    
+    func addImage(_ image: String, scale: UIView.ContentMode = .scaleAspectFit) -> UIImageView {
+        let img = UIImageView()
+        img.translatesAutoresizingMaskIntoConstraints = false
+        img.image = UIImage(named: image)
+        img.contentMode = scale
+        img.layer.masksToBounds = true
+        
+        return img
     }
     
     func addLabel(_ text: String, fz: CGFloat = 16, fw: UIFont.Weight = .regular, numLine: Int = 0, color: UIColor = .black) -> UILabel {
