@@ -6,14 +6,18 @@
 //
 
 import UIKit
+import Combine
 
 protocol HomeViewControllerProtocol: AnyObject {
+    func displayPosts(_ posts: [Post])
 }
 
 class HomeViewController: UIViewController, HomeViewControllerProtocol {
     var presenter: HomeViewPresenterProtocol!
     
-    private lazy var posts: [Post] = Post.mockData()
+    private var cancellables: Set<AnyCancellable> = []
+    private lazy var posts: [Post] = []
+
     private lazy var filteredPosts: [Post] = []
     private var isSearching = false
     
@@ -47,12 +51,14 @@ class HomeViewController: UIViewController, HomeViewControllerProtocol {
         
         view.addSubview(tableView)
         
+        presenter = HomeViewPresenter()
+        presenter.view = self
+        presenter.fetchPosts()
+        
         navigationController?.setNavigationBarHidden(true, animated: false)
         
         setupHeaderAndSearchbar()
         constraintsUI()
-        
-        tableView.keyboardDismissMode = .interactive
     }
     
     private func setupHeaderAndSearchbar() {
@@ -78,12 +84,19 @@ class HomeViewController: UIViewController, HomeViewControllerProtocol {
     }
     
     private func constraintsUI() {
+        tableView.keyboardDismissMode = .interactive
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: headerContainer.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+    }
+    
+    // MARK: - HomeViewControllerProtocol
+    func displayPosts(_ posts: [Post]) {
+        self.posts = posts
+        tableView.reloadData()
     }
 }
 

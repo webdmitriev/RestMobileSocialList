@@ -8,7 +8,7 @@
 import Foundation
 
 struct Post: Identifiable, Codable {
-    var id = UUID()
+    let id: Int
     let userAvatar: String
     let userName: String
     let postDate: String
@@ -18,36 +18,22 @@ struct Post: Identifiable, Codable {
     let comments: [PostComment]
     let like: Int
     
-    static func mockData() -> [Post] {
-        [
-            Post(userAvatar: "gabriella-avatar",
-                 userName: "Gabriella Gabriella Gabriella Gabriella",
-                 postDate: "01.01.2025",
-                 postTitle: "Title 1",
-                 postDescr: "Description 1",
-                 postThumbnail: "gabriella",
-                 comments: [
-                    PostComment(name: "Name 1", text: "Text 1"),
-                    PostComment(name: "Name 2", text: "Text 2")
-                 ],
-                 like: 2),
-            Post(userAvatar: "gabriella-avatar",
-                 userName: "Gabriella Gabriella Gabriella Gabriella",
-                 postDate: "01.01.2025",
-                 postTitle: "Title 2",
-                 postDescr: "Description 1",
-                 postThumbnail: "gabriella",
-                 comments: [
-                    PostComment(name: "Name 1", text: "Text 1"),
-                    PostComment(name: "Name 2", text: "Text 2")
-                 ],
-                 like: 3)
-        ]
+    private enum CodingKeys: String, CodingKey {
+        case id, userAvatar, userName, postDate, postTitle, postDescr, postThumbnail, comments, like
     }
 }
 
 struct PostComment: Identifiable, Codable {
-    var id = UUID()
+    let id: String
     let name: String
     let text: String
+}
+
+struct PostsResponse: Codable {
+    let posts: [Post]
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        posts = try container.decode([Post].self)
+    }
 }

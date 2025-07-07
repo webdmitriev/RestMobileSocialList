@@ -11,7 +11,11 @@ class PostCell: UITableViewCell {
     static let reuseID = "PostCell"
     
     private lazy var builder = UIBuilder()
+    private var imageLoadTask: URLSessionDataTask?
+    private var currentAvatarURL: String?
+    private var currentThumbnailURL: String?
     
+    // MARK: UIs
     private lazy var cellPost: UIView = {
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.backgroundColor = .appWhite
@@ -19,11 +23,11 @@ class PostCell: UITableViewCell {
         return $0
     }(UIView())
     
-    private lazy var userAvatar: UIImageView = builder.addImage("gabriella-avatar", scale: .scaleAspectFill)
+    private lazy var userAvatar: UIImageView = builder.addImage("default", scale: .scaleAspectFill)
     private lazy var userName: UILabel = builder.addLabel("", fz: 20, numLine: 1)
     private lazy var postDate: UILabel = builder.addLabel("", color: .appGray)
 
-    private lazy var postThumbnail: UIImageView = builder.addImage("gabriella-avatar", scale: .scaleAspectFill)
+    private lazy var postThumbnail: UIImageView = builder.addImage("default", scale: .scaleAspectFill)
     
     // MARK: CommentView + Label + Button
     private lazy var postCommentStackView: UIStackView = {
@@ -126,15 +130,67 @@ class PostCell: UITableViewCell {
         ])
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageLoadTask?.cancel()
+        userAvatar.image = UIImage(named: "default")
+        postThumbnail.image = UIImage(named: "default")
+    }
+    
     func configure(item: Post) {
+        loadImage(from: item.userAvatar, into: userAvatar)
+
+        self.userName.text = item.userName
+        self.postDate.text = item.postDate
+
         self.userAvatar.image = UIImage(named: item.userAvatar)
         self.userName.text = item.userName
         
-        self.postDate.text = item.postDate
-        self.postThumbnail.image = UIImage(named: item.postThumbnail)
+        loadImage(from: item.postThumbnail, into: postThumbnail)
         
         self.postCommentsCount.text = "\(item.comments.count)"
         self.postLikeCount.text = "\(item.like)"
+    }
+    
+    private func loadImage(from urlString: String, into imageView: UIImageView) {
+        guard let url = URL(string: urlString) else {
+            imageView.image = UIImage(named: "image_placeholder")
+            return
+        }
+        
+        // Заглушка
+        imageView.image = UIImage(named: "image_placeholder")
+        
+        // Загружаем картинку
+        imageLoadTask = URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
+            guard let self = self,
+                  error == nil,
+                  let data = data,
+                  let image = UIImage(data: data) else {
+                return
+            }
+            
+            DispatchQueue.main.async {
+                if imageView == self.userAvatar && url.absoluteString == self.currentAvatarURL ||
+                   imageView == self.postThumbnail && url.absoluteString == self.currentThumbnailURL {
+                    UIView.transition(with: imageView,
+                                    duration: 0.3,
+                                    options: .transitionCrossDissolve,
+                                    animations: {
+                                        imageView.image = image
+                                    },
+                                    completion: nil)
+                }
+            }
+        }
+        imageLoadTask?.resume()
+        
+        // Сохраняем текущие URL для проверки в prepareForReuse
+        if imageView == userAvatar {
+            currentAvatarURL = urlString
+        } else if imageView == postThumbnail {
+            currentThumbnailURL = urlString
+        }
     }
     
     @objc
