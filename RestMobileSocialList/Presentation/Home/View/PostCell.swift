@@ -7,13 +7,19 @@
 
 import UIKit
 
+protocol PostCellDelegate: AnyObject {
+    func postDidUpdateSaveState(postId: Int, isSaved: Bool)
+}
+
 class PostCell: UITableViewCell {
     static let reuseID = "PostCell"
+    weak var delegate: PostCellDelegate?
     
     private lazy var builder = UIBuilder()
     private var imageLoadTask: URLSessionDataTask?
     private var currentAvatarURL: String?
     private var currentThumbnailURL: String?
+    private var currentPost: Post?
     
     // MARK: UIs
     private lazy var cellPost: UIView = {
@@ -63,15 +69,20 @@ class PostCell: UITableViewCell {
         $0.heightAnchor.constraint(equalToConstant: 24).isActive = true
         
         $0.setBackgroundImage(UIImage(named: "icon-heart"), for: .normal)
+        $0.setBackgroundImage(UIImage(named: "icon-heart-active"), for: .selected)
         $0.contentMode = .scaleAspectFill
         
-        $0.addTarget(self, action: #selector(handleLikeBtnTapped), for: .touchUpInside)
+        $0.addTarget(self, action: #selector(savePost), for: .touchUpInside)
         
         return $0
     }(UIButton())
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        backgroundColor = .clear
+        contentView.backgroundColor = .clear
+        selectionStyle = .none
+
         backgroundColor = .appBg
         contentView.addSubview(cellPost)
 
@@ -138,18 +149,20 @@ class PostCell: UITableViewCell {
     }
     
     func configure(item: Post) {
-        loadImage(from: item.userAvatar, into: userAvatar)
+        self.currentPost = item
 
-        self.userName.text = item.userName
-        self.postDate.text = item.postDate
+        loadImage(from: item.userAvatar, into: userAvatar)
 
         self.userAvatar.image = UIImage(named: item.userAvatar)
         self.userName.text = item.userName
         
         loadImage(from: item.postThumbnail, into: postThumbnail)
         
+        self.postDate.text = item.postDate
         self.postCommentsCount.text = "\(item.comments.count)"
         self.postLikeCount.text = "\(item.like)"
+        
+        checkIfPostIsSaved()
     }
     
     private func loadImage(from urlString: String, into imageView: UIImageView) {
@@ -193,8 +206,24 @@ class PostCell: UITableViewCell {
         }
     }
     
+    private func checkIfPostIsSaved() {
+        guard let post = currentPost else { return }
+        let savedPosts = CoreDataManager.shared.fetchSavedPosts()
+        postLikeBtn.isSelected = savedPosts.contains { $0.id == post.id }
+    }
+    
     @objc
-    func handleLikeBtnTapped() {
-        print("Like")
+    func savePost() {
+        guard let post = currentPost else { return }
+        let newState = !postLikeBtn.isSelected
+                
+        if newState {
+            CoreDataManager.shared.savePost(post)
+        } else {
+            CoreDataManager.shared.deletePost(withId: post.id)
+        }
+        
+        postLikeBtn.isSelected = newState
+        delegate?.postDidUpdateSaveState(postId: post.id, isSaved: newState)
     }
 }

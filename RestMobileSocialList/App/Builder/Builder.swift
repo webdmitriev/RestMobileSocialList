@@ -21,4 +21,10 @@ class Builder {
         view.presenter = presenter
         return view
     }
+    
+    // FavoriteView
+    static func createFavoritesViewController() -> UIViewController {
+        let view = FavoritePostsViewController()
+        return view
+    }
 }
