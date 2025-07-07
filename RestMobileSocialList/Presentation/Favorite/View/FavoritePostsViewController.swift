@@ -32,6 +32,9 @@ class FavoritePostsViewController: UIViewController {
         
         view.addSubviews(tableView, emptyStateLabel)
         
+        navigationController?.topViewController?.title = "Favorite"
+        navigationController?.navigationBar.prefersLargeTitles = true
+        
         constraintsUI()
         loadSavedPosts()
     }
