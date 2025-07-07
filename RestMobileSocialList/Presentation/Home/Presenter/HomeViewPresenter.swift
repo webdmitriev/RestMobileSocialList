@@ -19,7 +19,6 @@ class HomeViewPresenter: HomeViewPresenterProtocol {
     }
     
     func setupUI() {
-        
     }
     
     

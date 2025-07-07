@@ -34,7 +34,7 @@ struct Post: Identifiable, Codable {
             Post(userAvatar: "gabriella-avatar",
                  userName: "Gabriella Gabriella Gabriella Gabriella",
                  postDate: "01.01.2025",
-                 postTitle: "Title 1",
+                 postTitle: "Title 2",
                  postDescr: "Description 1",
                  postThumbnail: "gabriella",
                  comments: [
